@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config()
 const { MongoClient } = require('mongodb');
+const ObjectId = require('mongodb').ObjectId;
 
 // initialize
 const port = process.env.PORT || 5000;
@@ -16,18 +17,27 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
     try{
-        
+
         await client.connect();
         const database = client.db("WatchShop");
         const productsCollection = database.collection("products");
         const reviewsCollection = database.collection('reviews');
         const usersCollection = database.collection('users');
+        const ordersCollection = database.collection("orders");
 
         // getting all the products
         app.get('/products', async(req, res)=> {
             const cursor = productsCollection.find({})
             const result = await cursor.toArray();
             res.send(result);
+        })
+
+        app.get('/products/:id', async(req, res)=> {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productsCollection.findOne(query);
+            res.json(result);
+
         })
 
         // getting all the reviews
@@ -43,6 +53,13 @@ async function run() {
             const result = await usersCollection.insertOne(user);
             res.json(result);
         });
+
+        // save orders to database
+        app.post('/orders', async(req, res)=> {
+            const order = req.body;
+            const result = await ordersCollection.insertOne(order);
+            res.json(result);
+        })
 
     } finally{
         // await client.close();
