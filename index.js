@@ -32,12 +32,20 @@ async function run() {
             res.send(result);
         })
 
+        // getting specefiq products
         app.get('/products/:id', async(req, res)=> {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await productsCollection.findOne(query);
             res.json(result);
 
+        })
+
+        // add new product to database from client-side
+        app.post('/products', async(req, res)=> {
+            const newProduct = req.body;
+            const result = await productsCollection.insertOne(newProduct);
+            res.json(result);
         })
 
         // delete products from database
