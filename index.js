@@ -47,6 +47,16 @@ async function run() {
             res.send(result);
         })
 
+        // Insert reviews from client side
+        app.put('/reviews', async (req, res) => {
+            const review = req.body;
+            const filter = { email: review.email };
+            const options = { upsert: true };
+            const updateDoc = { $set: review };
+            const result = await reviewsCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+        });
+
         // add user to database
         app.post('/users', async (req, res) => {
             const user = req.body;
