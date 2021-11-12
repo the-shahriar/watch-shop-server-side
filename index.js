@@ -16,7 +16,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 
 async function run() {
-    try{
+    try {
 
         await client.connect();
         const database = client.db("WatchShop");
@@ -38,6 +38,14 @@ async function run() {
             const result = await productsCollection.findOne(query);
             res.json(result);
 
+        })
+
+        // delete products from database
+        app.delete('/products/:id', async(req, res)=> {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await productsCollection.deleteOne(query);
+            res.json(result);
         })
 
         // getting all the reviews
