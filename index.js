@@ -84,6 +84,15 @@ async function run() {
             res.json({ admin: isAdmin });
         })
 
+        // make admin api
+        app.put('/users/admin', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const updateDoc = { $set: { role: 'admin' } };
+            const result = await usersCollection.updateOne(filter, updateDoc);
+            res.json(result);
+        })
+
         // save orders to database
         app.post('/orders', async(req, res)=> {
             const order = req.body;
@@ -106,6 +115,13 @@ async function run() {
             const cursor = ordersCollection.find(query);
             const result = await cursor.toArray();
             res.json(result);
+        })
+
+        // get all orders
+        app.get('/orders', async(req, res)=> {
+            const cursor = ordersCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result);
         })
 
     } finally{
