@@ -116,6 +116,15 @@ async function run() {
             res.json(result);
         })
 
+        // update order status
+        app.put('/orders/:id', async(req, res)=> {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const updateDoc = {$set: {status: "shipped"}};
+            const result = await ordersCollection.updateOne(query, updateDoc);
+            res.json(result);
+        })
+
         // delete order from database
         app.delete('/orders/:id', async(req, res)=> {
             const id = req.params.id;
